@@ -34,11 +34,12 @@
     position:absolute;
     width:12px;
     height:6px;
-    border-left:2px solid rgba(0,0,0,0.6);
-    border-bottom:2px solid rgba(0,0,0,0.6);
+    border-left:2px solid rgba(0,0,0,0.75);
+    border-bottom:2px solid rgba(0,0,0,0.75);
     transform:rotate(-45deg);
     z-index:3;
     transition: opacity 2s ease;
+    will-change: transform;
   }
 
   /* Fireflies */
@@ -84,6 +85,8 @@
 
 <script>
 let birds = [], fireflies = [], stars = [];
+const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const speedMultiplier = isMobile ? 0.7 : 1;
 
 // Scene update
 function updateScene(){
@@ -97,7 +100,7 @@ function updateScene(){
 
   let progress = time/24;
   let x = window.innerWidth * progress;
-  let y = Math.sin(progress*Math.PI) * (window.innerHeight/2-50) + 50;
+  let y = -400 * Math.pow(progress - 0.5, 2) + (window.innerHeight/2 - 50);
 
   // Smooth background gradient
   if(time>=6 && time<17){
@@ -147,11 +150,11 @@ function createBirds(){
     b.dataset.progress=0;
     b.dataset.state="normal";
     b.style.top=(50+Math.random()*100)+"px";
-    b.dataset.speed=0.0006+Math.random()*0.001;
-    b.dataset.amplitude=10+Math.random()*15;
-    b.dataset.frequency=1+Math.random()*2;
+    b.dataset.speed=(0.0003+Math.random()*0.0005) * speedMultiplier;
+    b.dataset.amplitude=8+Math.random()*12;
+    b.dataset.frequency=0.8+Math.random()*1.5;
     b.dataset.phase=Math.random()*Math.PI*2;
-    b.style.opacity=1;
+    b.style.opacity=0.85;
     document.body.appendChild(b);
     birds.push(b);
   }
@@ -180,14 +183,14 @@ function animateBirdsAway(){
   birds.forEach(b=>{
     if(b.dataset.state!=="away"){
       b.dataset.state="away";
-      b.dataset.vx=2 + Math.random()*1; // horizontal speed
-      b.dataset.vy=-1 - Math.random()*1; // upward
+      b.dataset.vx=(1.5 + Math.random()*0.8) * speedMultiplier; // horizontal speed
+      b.dataset.vy=(-0.8 - Math.random()*0.6) * speedMultiplier; // upward
     }
     let rect=b.getBoundingClientRect();
     let x=parseFloat(rect.left) + parseFloat(b.dataset.vx);
     let y=parseFloat(rect.top) + parseFloat(b.dataset.vy);
     b.style.transform=`translate(${x}px,${y}px) rotate(-45deg)`;
-    b.style.opacity=0.8;
+    b.style.opacity=0.7;
     if(y< -50 || x>window.innerWidth + 50){
       b.remove();
       birds=birds.filter(bird=>bird!==b);
