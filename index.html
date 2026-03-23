@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Coming Soon</title>
+<title>Coming Soon - Desert</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Segoe UI',sans-serif;}
@@ -13,7 +13,7 @@
   p{font-size:clamp(14px,2.5vw,18px);opacity:0.85;}
 
   /* Sun & Moon */
-  .sun,.moon{position:absolute;width:clamp(60px,8vw,100px);height:clamp(60px,8vw,100px);border-radius:50%;transition:all 1.5s ease-in-out;}
+  .sun,.moon{position:absolute;width:clamp(60px,8vw,100px);height:clamp(60px,8vw,100px);border-radius:50%;transition:all 2s ease-in-out;}
   .sun{background:radial-gradient(circle,#ffe29a,#ff8c42);box-shadow:0 0 80px rgba(255,170,50,0.6);}
   .moon{background:#f5f3ce;box-shadow:0 0 40px rgba(255,255,255,0.4);display:none;}
 
@@ -27,10 +27,7 @@
     opacity:0;
     animation:twinkle linear infinite;
   }
-  @keyframes twinkle{
-    0%,100%{opacity:0;}
-    50%{opacity:1;}
-  }
+  @keyframes twinkle{0%,100%{opacity:0;}50%{opacity:1;}}
 
   /* Birds */
   .bird{
@@ -41,10 +38,11 @@
     border-bottom:2px solid rgba(0,0,0,0.6);
     transform:rotate(-45deg);
     z-index:3;
+    transition: opacity 2s ease;
   }
 
   /* Fireflies */
-  .firefly{position:absolute;width:6px;height:6px;background:yellow;border-radius:50%;opacity:0;animation:blink 2s infinite;}
+  .firefly{position:absolute;width:6px;height:6px;background:yellow;border-radius:50%;opacity:0;animation:blink 2s infinite;transition: opacity 2s ease;}
   @keyframes blink{0%,100%{opacity:0;}50%{opacity:1;}}
 
   /* Desert SVG */
@@ -53,11 +51,12 @@
   .desert rect{fill:#3a7d44;} /* plants color */
 
   @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
   @media(max-width:600px){h1{font-size:36px;}p{font-size:16px;}}
 </style>
 </head>
-
 <body>
+
 <div id="stars-container"></div>
 <div class="sun" id="sun"></div>
 <div class="moon" id="moon"></div>
@@ -84,13 +83,12 @@
 </svg>
 
 <script>
-let birds = [];
-let fireflies = [];
-let stars = [];
+let birds = [], fireflies = [], stars = [];
 
+// Scene update
 function updateScene(){
   const now = new Date();
-  const hours = 20;
+  const hours = now.getHours();
   const minutes = now.getMinutes();
   const time = hours + minutes/60;
 
@@ -101,8 +99,22 @@ function updateScene(){
   let x = window.innerWidth * progress;
   let y = Math.sin(progress*Math.PI) * (window.innerHeight/2-50) + 50;
 
-  if(time>=6 && time<=18){
+  // Smooth background gradient
+  if(time>=6 && time<17){
     document.body.style.background="linear-gradient(to top,#87ceeb,#fdf6e3)";
+  } else if(time>=17 && time<19){
+    let ratio = (time-17)/2;
+    document.body.style.background=`linear-gradient(to top,
+      rgba(135,206,235,${1-ratio}), 
+      rgba(253,246,227,${1-ratio}), 
+      rgba(255,126,95,${ratio}), 
+      rgba(254,180,123,${ratio}))`;
+  } else {
+    document.body.style.background="linear-gradient(to top,#0f2027,#203a43,#2c5364)";
+  }
+
+  // Sun & Moon
+  if(time>=6 && time<=18){
     sun.style.display="block";
     moon.style.display="none";
     removeStars();
@@ -113,7 +125,6 @@ function updateScene(){
     removeFireflies();
     animateBirds();
   } else {
-    document.body.style.background="linear-gradient(to top,#0f2027,#203a43,#2c5364)";
     sun.style.display="none";
     moon.style.display="block";
     moon.style.left = x + "px";
@@ -122,10 +133,8 @@ function updateScene(){
     createFireflies();
     removeBirds();
     createStars();
-  }
-
-  if(time>17 && time<19){
-    document.body.style.background="linear-gradient(to top,#ff7e5f,#feb47b)";
+    fadeInFireflies();
+    animateBirdsAway();
   }
 }
 
@@ -136,31 +145,58 @@ function createBirds(){
     const b=document.createElement("div");
     b.className="bird";
     b.dataset.progress=0;
+    b.dataset.state="normal";
     b.style.top=(50+Math.random()*100)+"px";
     b.dataset.speed=0.0006+Math.random()*0.001;
     b.dataset.amplitude=10+Math.random()*15;
     b.dataset.frequency=1+Math.random()*2;
     b.dataset.phase=Math.random()*Math.PI*2;
+    b.style.opacity=1;
     document.body.appendChild(b);
     birds.push(b);
   }
 }
+
 function animateBirds(){
   birds.forEach(b=>{
-    let p=parseFloat(b.dataset.progress);
-    p+=parseFloat(b.dataset.speed);
-    if(p>1){p=0;b.style.top=(50+Math.random()*100)+"px";}
-    let x=p*window.innerWidth;
-    let amp=parseFloat(b.dataset.amplitude);
-    let freq=parseFloat(b.dataset.frequency);
-    let phase=parseFloat(b.dataset.phase);
-    let y=amp*Math.sin(Math.PI*p*freq + phase) + parseFloat(b.style.top);
-    b.style.transform=`translate(${x}px,${y}px) rotate(-45deg)`;
-    b.dataset.progress=p;
+    if(b.dataset.state!=="away"){
+      let p=parseFloat(b.dataset.progress);
+      p+=parseFloat(b.dataset.speed);
+      if(p>1){p=0;b.style.top=(50+Math.random()*100)+"px";}
+      let x=p*window.innerWidth;
+      let amp=parseFloat(b.dataset.amplitude);
+      let freq=parseFloat(b.dataset.frequency);
+      let phase=parseFloat(b.dataset.phase);
+      let y=amp*Math.sin(Math.PI*p*freq + phase) + parseFloat(b.style.top);
+      b.style.transform=`translate(${x}px,${y}px) rotate(-45deg)`;
+      b.dataset.progress=p;
+    }
   });
   requestAnimationFrame(animateBirds);
 }
-function removeBirds(){birds.forEach(b=>b.remove()); birds=[];}
+
+// Birds leaving naturally
+function animateBirdsAway(){
+  birds.forEach(b=>{
+    if(b.dataset.state!=="away"){
+      b.dataset.state="away";
+      b.dataset.vx=2 + Math.random()*1; // horizontal speed
+      b.dataset.vy=-1 - Math.random()*1; // upward
+    }
+    let rect=b.getBoundingClientRect();
+    let x=parseFloat(rect.left) + parseFloat(b.dataset.vx);
+    let y=parseFloat(rect.top) + parseFloat(b.dataset.vy);
+    b.style.transform=`translate(${x}px,${y}px) rotate(-45deg)`;
+    b.style.opacity=0.8;
+    if(y< -50 || x>window.innerWidth + 50){
+      b.remove();
+      birds=birds.filter(bird=>bird!==b);
+    }
+  });
+  if(birds.length>0) requestAnimationFrame(animateBirdsAway);
+}
+
+function removeBirds(){birds.forEach(b=>b.remove()); birds=[]();}
 
 // Fireflies
 function createFireflies(){
@@ -171,9 +207,13 @@ function createFireflies(){
     f.style.top=Math.random()*window.innerHeight*0.6+"px";
     f.style.left=Math.random()*window.innerWidth+"px";
     f.style.animationDuration=(1+Math.random()*2)+"s";
+    f.style.opacity=0;
     document.body.appendChild(f);
     fireflies.push(f);
   }
+}
+function fadeInFireflies(){
+  fireflies.forEach(f=>f.style.opacity=0.6);
 }
 function removeFireflies(){fireflies.forEach(f=>f.remove()); fireflies=[];}
 
@@ -197,5 +237,6 @@ updateScene();
 setInterval(updateScene,60000);
 window.addEventListener('resize',updateScene);
 </script>
+
 </body>
 </html>
