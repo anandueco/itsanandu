@@ -1,176 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Coming Soon</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Coming Soon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Segoe UI',sans-serif;}
+  body{height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:background 2s ease;}
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-    }
+  .container{text-align:center;z-index:2;color:white;animation:fadeIn 2s ease;padding:0 20px;}
+  h1{font-size:clamp(32px,6vw,52px);letter-spacing:2px;margin-bottom:10px;}
+  p{font-size:clamp(14px,2.5vw,18px);opacity:0.85;}
 
-    body {
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 2s ease;
-    }
+  /* Sun & Moon */
+  .sun,.moon{position:absolute;width:clamp(60px,8vw,100px);height:clamp(60px,8vw,100px);border-radius:50%;transition:all 1.5s ease-in-out;}
+  .sun{background:radial-gradient(circle,#ffe29a,#ff8c42);box-shadow:0 0 80px rgba(255,170,50,0.6);}
+  .moon{background:#f5f3ce;box-shadow:0 0 40px rgba(255,255,255,0.4);display:none;}
 
-    .container {
-      text-align: center;
-      z-index: 2;
-      color: white;
-      animation: fadeIn 2s ease;
-      padding: 0 20px;
-    }
+  /* Stars */
+  .star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:0;
+    animation:twinkle linear infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:0;}
+    50%{opacity:1;}
+  }
 
-    h1 {
-      font-size: clamp(32px, 6vw, 52px);
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-    }
+  /* Birds */
+  .bird{
+    position:absolute;
+    width:12px;
+    height:6px;
+    border-left:2px solid rgba(0,0,0,0.6);
+    border-bottom:2px solid rgba(0,0,0,0.6);
+    transform:rotate(-45deg);
+    z-index:3;
+  }
 
-    p {
-      font-size: clamp(14px, 2.5vw, 18px);
-      opacity: 0.85;
-    }
+  /* Fireflies */
+  .firefly{position:absolute;width:6px;height:6px;background:yellow;border-radius:50%;opacity:0;animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:0;}50%{opacity:1;}}
 
-    /* Sun & Moon */
-    .sun, .moon {
-      position: absolute;
-      width: clamp(60px, 8vw, 100px);
-      height: clamp(60px, 8vw, 100px);
-      border-radius: 50%;
-      transition: all 1.5s ease-in-out;
-    }
+  /* Desert SVG */
+  .desert{position:absolute;bottom:0;width:100%;z-index:1;}
+  .desert path{fill:#d9b382;} /* sand color */
+  .desert rect{fill:#3a7d44;} /* plants color */
 
-    .sun {
-      background: radial-gradient(circle, #ffe29a, #ff8c42);
-      box-shadow: 0 0 80px rgba(255, 170, 50, 0.6);
-    }
-
-    .moon {
-      background: #f5f3ce;
-      box-shadow: 0 0 40px rgba(255,255,255,0.4);
-      display: none;
-    }
-
-    /* Stars */
-    .stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      background-image: radial-gradient(white 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0;
-      transition: opacity 2s ease;
-    }
-
-    /* Desert SVG */
-    .desert {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      z-index: 1;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 36px;
-      }
-      p {
-        font-size: 16px;
-      }
-    }
-  </style>
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:600px){h1{font-size:36px;}p{font-size:16px;}}
+</style>
 </head>
 
 <body>
+<div id="stars-container"></div>
+<div class="sun" id="sun"></div>
+<div class="moon" id="moon"></div>
 
-  <div class="stars" id="stars"></div>
-  <div class="sun" id="sun"></div>
-  <div class="moon" id="moon"></div>
+<div class="container">
+<h1>Coming Soon</h1>
+<p>Crafting something beautiful in the sands of time.</p>
+</div>
 
-  <div class="container">
-    <h1>Coming Soon</h1>
-    <p>Crafting something beautiful in the sands of time.</p>
-  </div>
-  <svg class="desert" viewBox="0 0 1440 320" preserveAspectRatio="none">
-    <path fill="#e9c46a"
-      d="M0,224L80,208C160,192,320,160,480,154C640,149,800,171,960,192C1120,213,1280,235,1440,224V320H0Z">
-    </path>
-    <g transform="translate(1100,180)">
-      <rect width="20" height="80" fill="#2a9d8f"/>
-      <rect x="-15" y="20" width="15" height="10" fill="#2a9d8f"/>
-      <rect x="20" y="40" width="15" height="10" fill="#2a9d8f"/>
-    </g>
-    <g transform="translate(300,200)">
-      <rect width="15" height="60" fill="#2a9d8f"/>
-      <rect x="-10" y="20" width="10" height="8" fill="#2a9d8f"/>
-    </g>
-  </svg>
+<!-- Desert SVG -->
+<svg class="desert" viewBox="0 0 1440 320" preserveAspectRatio="none">
+<path d="M0,224L80,208C160,192,320,160,480,154C640,149,800,171,960,192C1120,213,1280,235,1440,224V320H0Z"></path>
+<!-- Cactus 1 -->
+<g transform="translate(1100,180)">
+  <rect width="20" height="80"/>
+  <rect x="-15" y="20" width="15" height="10"/>
+  <rect x="20" y="40" width="15" height="10"/>
+</g>
+<!-- Cactus 2 -->
+<g transform="translate(300,200)">
+  <rect width="15" height="60"/>
+  <rect x="-10" y="20" width="10" height="8"/>
+</g>
+</svg>
 
-  <script>
-    function updateScene() {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const time = hours + minutes / 60;
+<script>
+let birds = [];
+let fireflies = [];
+let stars = [];
 
-      const sun = document.getElementById("sun");
-      const moon = document.getElementById("moon");
-      const stars = document.getElementById("stars");
+function updateScene(){
+  const now = new Date();
+  const hours = 20;
+  const minutes = now.getMinutes();
+  const time = hours + minutes/60;
 
-      let progress = time / 24;
+  const sun = document.getElementById("sun");
+  const moon = document.getElementById("moon");
 
-      let x = window.innerWidth * (1 - progress);
-      let y = Math.sin(progress * Math.PI) * (window.innerHeight / 2 - 50) + 50;
+  let progress = time/24;
+  let x = window.innerWidth * progress;
+  let y = Math.sin(progress*Math.PI) * (window.innerHeight/2-50) + 50;
 
-      if (time >= 6 && time <= 18) {
-        document.body.style.background =
-          "linear-gradient(to top, #87ceeb, #fdf6e3)";
+  if(time>=6 && time<=18){
+    document.body.style.background="linear-gradient(to top,#87ceeb,#fdf6e3)";
+    sun.style.display="block";
+    moon.style.display="none";
+    removeStars();
+    sun.style.left = x + "px";
+    sun.style.top = y + "px";
 
-        sun.style.display = "block";
-        moon.style.display = "none";
-        stars.style.opacity = 0;
+    createBirds();
+    removeFireflies();
+    animateBirds();
+  } else {
+    document.body.style.background="linear-gradient(to top,#0f2027,#203a43,#2c5364)";
+    sun.style.display="none";
+    moon.style.display="block";
+    moon.style.left = x + "px";
+    moon.style.top = y + "px";
 
-        sun.style.left = x + "px";
-        sun.style.top = (y) + "px";
+    createFireflies();
+    removeBirds();
+    createStars();
+  }
 
-      } else {
-        document.body.style.background =
-          "linear-gradient(to top, #0f2027, #203a43, #2c5364)";
+  if(time>17 && time<19){
+    document.body.style.background="linear-gradient(to top,#ff7e5f,#feb47b)";
+  }
+}
 
-        sun.style.display = "none";
-        moon.style.display = "block";
-        stars.style.opacity = 0.6;
+// Birds
+function createBirds(){
+  if(birds.length>0) return;
+  for(let i=0;i<7;i++){
+    const b=document.createElement("div");
+    b.className="bird";
+    b.dataset.progress=0;
+    b.style.top=(50+Math.random()*100)+"px";
+    b.dataset.speed=0.0006+Math.random()*0.001;
+    b.dataset.amplitude=10+Math.random()*15;
+    b.dataset.frequency=1+Math.random()*2;
+    b.dataset.phase=Math.random()*Math.PI*2;
+    document.body.appendChild(b);
+    birds.push(b);
+  }
+}
+function animateBirds(){
+  birds.forEach(b=>{
+    let p=parseFloat(b.dataset.progress);
+    p+=parseFloat(b.dataset.speed);
+    if(p>1){p=0;b.style.top=(50+Math.random()*100)+"px";}
+    let x=p*window.innerWidth;
+    let amp=parseFloat(b.dataset.amplitude);
+    let freq=parseFloat(b.dataset.frequency);
+    let phase=parseFloat(b.dataset.phase);
+    let y=amp*Math.sin(Math.PI*p*freq + phase) + parseFloat(b.style.top);
+    b.style.transform=`translate(${x}px,${y}px) rotate(-45deg)`;
+    b.dataset.progress=p;
+  });
+  requestAnimationFrame(animateBirds);
+}
+function removeBirds(){birds.forEach(b=>b.remove()); birds=[];}
 
-        moon.style.left = x + "px";
-        moon.style.top = (y) + "px";
-      }
+// Fireflies
+function createFireflies(){
+  if(fireflies.length>0) return;
+  for(let i=0;i<15;i++){
+    const f=document.createElement("div");
+    f.className="firefly";
+    f.style.top=Math.random()*window.innerHeight*0.6+"px";
+    f.style.left=Math.random()*window.innerWidth+"px";
+    f.style.animationDuration=(1+Math.random()*2)+"s";
+    document.body.appendChild(f);
+    fireflies.push(f);
+  }
+}
+function removeFireflies(){fireflies.forEach(f=>f.remove()); fireflies=[];}
 
-      if (time > 17 && time < 19) {
-        document.body.style.background =
-          "linear-gradient(to top, #ff7e5f, #feb47b)";
-      }
-    }
+// Stars
+function createStars(){
+  if(stars.length>0) return;
+  const container = document.getElementById("stars-container");
+  for(let i=0;i<100;i++){
+    const s=document.createElement("div");
+    s.className="star";
+    s.style.top=Math.random()*window.innerHeight*0.5+"px";
+    s.style.left=Math.random()*window.innerWidth+"px";
+    s.style.animationDuration=(1+Math.random()*2)+"s";
+    container.appendChild(s);
+    stars.push(s);
+  }
+}
+function removeStars(){stars.forEach(s=>s.remove()); stars=[];}
 
-    updateScene();
-    setInterval(updateScene, 60000);
-    window.addEventListener('resize', updateScene);
-  </script>
-
+updateScene();
+setInterval(updateScene,60000);
+window.addEventListener('resize',updateScene);
+</script>
 </body>
 </html>
