@@ -314,24 +314,20 @@ function updateScene(){
     sun.style.left = x + "px";
     sun.style.top = y + "px";
 
-    createBirds();
     removeFireflies();
     if(!missileAnimationId){
       animateMissiles(); // Start missile animation if not running
     }
-    animateBirds();
   } else {
     sun.style.display="none";
     moon.style.display="block";
     moon.style.left = x + "px";
     moon.style.top = y + "px";
 
-    createFireflies();
     removeBirds();
     removeMissiles(); // Remove missiles at night
     createStars();
     fadeInFireflies();
-    animateBirdsAway();
   }
 }
 
